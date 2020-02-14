@@ -86,8 +86,3 @@ fun Application.app(kodein: Kodein) {
 
 
 }
-
-suspend fun ApplicationCall.send(statusCode: HttpStatusCode, message : Any) {
-    respond(message)
-    response.status(statusCode)
-}
