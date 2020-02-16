@@ -43,7 +43,7 @@ import services.UserService
 
 fun main(args: Array<String>) {
     println("Starting server on port ${8080}")
-   embeddedServer(Netty, commandLineEnvironment(args)).start(wait = true)
+    embeddedServer(Netty, commandLineEnvironment(args)).start(wait = true)
 }
 
 

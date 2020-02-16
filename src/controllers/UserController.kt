@@ -2,6 +2,7 @@ package controllers
 
 import dtos.LogInCredentials
 import io.ktor.application.call
+import io.ktor.http.HttpStatusCode
 import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.Route
@@ -23,7 +24,8 @@ fun Route.user(userService: UserDao) {
             // Check if the username is available
             val existingUser = userService.getUserByUserName(post.username)
             if(existingUser != null) {
-                error("username is unavailable")
+                call.respond(HttpStatusCode.BadRequest, mapOf("error" to "username unavailable"))
+                return@post
             }
 
             // Validate password

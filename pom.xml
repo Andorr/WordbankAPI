@@ -14,7 +14,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <kotlin.compiler.incremental>false</kotlin.compiler.incremental>
-        <kotlin.compiler.jvmTarget>12</kotlin.compiler.jvmTarget>
+        <kotlin.compiler.jvmTarget>11</kotlin.compiler.jvmTarget>
         <main.class>io.ktor.server.netty.EngineMain</main.class>
     </properties>
     <repositories>
@@ -114,7 +114,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <configuration><source>12</source><target>12</target></configuration>
+                <configuration><source>11</source><target>11</target></configuration>
             </plugin>
             <plugin>
                 <artifactId>kotlin-maven-plugin</artifactId>
@@ -136,7 +136,7 @@
                         <goals><goal>test-compile</goal></goals>
                         <configuration>
                             <experimentalCoroutines>enable</experimentalCoroutines>
-                            <jvmTarget>12</jvmTarget>
+                            <jvmTarget>11</jvmTarget>
                         </configuration>
                     </execution>
                 </executions>
