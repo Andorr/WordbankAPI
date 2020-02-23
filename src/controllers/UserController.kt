@@ -8,6 +8,9 @@ import com.wordbank.models.User
 import com.wordbank.models.toDto
 import com.wordbank.services.UserDao
 import io.ktor.application.call
+import io.ktor.auth.authenticate
+import io.ktor.auth.authentication
+import io.ktor.auth.jwt.JWTPrincipal
 import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
 import io.ktor.routing.Route
@@ -47,11 +50,19 @@ fun Route.user(userService: UserDao) {
                 .also { call.respond(it.toDto()) }
         }
 
-        get("/me") {
+        authenticate {
+            get("/me") {
 
-            //call.respond(User( "Anders", "asdf"))
-
-
+                call.authentication.principal<JWTPrincipal>()!!
+                    .let { userService.getUserById(it.payload.subject) }
+                    .whenNull {
+                        call.respond(HttpStatusCode.BadRequest, mapOf("error" to "user does not exists"))
+                        return@get
+                    }!!
+                    .also {
+                       call.respond(it.toDto())
+                    }
+            }
         }
 
     }

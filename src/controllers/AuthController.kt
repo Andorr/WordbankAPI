@@ -120,7 +120,7 @@ fun Route.auth(kodein: Kodein) {
 
 suspend fun ApplicationCall.handleTokenRequest(user: User, jwtHandler: JWTHandler, grantStore: GrantStore) {
     // Create refresh token
-    val refreshExpireDate = com.wordbank.auth.createExpirationDate(java.time.Duration.ofDays(100))
+    val refreshExpireDate = com.wordbank.auth.createExpirationDate(java.time.Duration.ofDays(10))
     val refreshToken = jwtHandler.signRefresh(user.id.toString(), refreshExpireDate)
     grantStore.insertItem(refreshToken,
         com.wordbank.auth.REFRESH_GRANT, user.id.toString(),
@@ -129,9 +129,10 @@ suspend fun ApplicationCall.handleTokenRequest(user: User, jwtHandler: JWTHandle
     respond(
         io.ktor.http.HttpStatusCode.OK,
         kotlin.collections.mapOf(
-            "access_token" to jwtHandler.signAccess(user, com.wordbank.auth.LIFETIME_ONE_HOUR),
-            "expires_in" to com.wordbank.auth.LIFETIME_ONE_HOUR,
-            "refresh_token" to refreshToken
+            "tokenType" to "Bearer",
+            "accessToken" to jwtHandler.signAccess(user, com.wordbank.auth.LIFETIME_ONE_HOUR),
+            "expiresIn" to com.wordbank.auth.LIFETIME_ONE_HOUR,
+            "refreshToken" to refreshToken
         )
     )
 }

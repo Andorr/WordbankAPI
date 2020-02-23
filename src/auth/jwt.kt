@@ -9,6 +9,7 @@ import io.ktor.application.Application
 import io.ktor.application.install
 import io.ktor.auth.Authentication
 import io.ktor.auth.UserIdPrincipal
+import io.ktor.auth.jwt.JWTPrincipal
 import io.ktor.auth.jwt.jwt
 import java.time.Duration
 import java.util.*
@@ -72,7 +73,7 @@ fun Application.jwt(jwtHandler: JWTHandler) {
         jwt {
             verifier(jwtHandler.verifier)
             validate {
-                UserIdPrincipal(it.payload.getClaim("name").asString())
+                JWTPrincipal(it.payload)
             }
         }
     }
