@@ -7,6 +7,8 @@ import com.wordbank.auth.JWTHandler
 import com.wordbank.auth.jwt
 import com.wordbank.controllers.auth
 import com.wordbank.controllers.user
+import com.wordbank.services.GrantStore
+import com.wordbank.services.GrantStoreService
 import com.wordbank.services.UserDao
 import com.wordbank.services.UserService
 import io.ktor.application.Application
@@ -38,13 +40,17 @@ fun main(args: Array<String>) {
 fun Application.app() {
     val username = environment.config.property("db.username").getString()
     val password = environment.config.property("db.password").getString()
+    val database = environment.config.property("db.database").getString()
 
     app(Kodein {
         bind<com.mongodb.MongoClient>() with singleton {
             KMongo.createClient(ConnectionString("mongodb+srv://${username}:${password}@maincluster-bknyx.gcp.mongodb.net/test?retryWrites=true"))
         }
         bind<UserDao>() with singleton {
-            UserService(instance(), "test")
+            UserService(instance(), database)
+        }
+        bind<GrantStore>() with singleton {
+            GrantStoreService(instance(), database)
         }
         bind<JWTHandler>() with singleton {
             JWTHandler(
@@ -63,7 +69,7 @@ fun Application.app(kodein: Kodein) {
     jwt(jwtHandler)
 
     routing {
-        auth(userService, jwtHandler)
+        auth(kodein)
         user(userService)
     }
 
