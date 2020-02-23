@@ -1,7 +1,7 @@
-package services
+package com.wordbank.services
 
 import com.mongodb.MongoClient
-import models.User
+import com.wordbank.models.User
 import org.bson.BsonDocument
 import org.bson.BsonObjectId
 import org.bson.Document
@@ -11,7 +11,7 @@ import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
 
 interface UserDao {
-    fun getUserByUserName(username: String): User?
+    fun getUserByEmail(email: String): User?
     fun createUser(user: User)
 }
 
@@ -19,9 +19,8 @@ class UserService(mongoClient: MongoClient, database: String) : UserDao {
     private val db = mongoClient.getDatabase(database)
     private val collection = db.getCollection<User>()
 
-    override fun getUserByUserName(username: String): User? {
-        val user = collection.findOne(User::username eq username)
-        return user
+    override fun getUserByEmail(email: String): User? {
+        return collection.findOne(User::email eq email)
     }
 
     override fun createUser(user: User) {

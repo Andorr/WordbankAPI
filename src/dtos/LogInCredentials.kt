@@ -1,3 +1,3 @@
-package dtos
+package com.wordbank.dtos
 
-data class LogInCredentials(val username: String, val password: String)
+data class LogInCredentials(val email: String, val password: String)
