@@ -23,7 +23,6 @@ class DictService(
     private val folderCollection = db.getCollection<Folder>()
 
     override fun getFolders(config: PagedConfig): PagedList<Folder> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return CrudService.getMany(folderCollection, config)
     }
-
 }

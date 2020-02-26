@@ -19,7 +19,8 @@ enum class WordType {
 
 data class Word(
     val word : String,
-    val type : WordType
+    val type : WordType,
+    val owner : Id<User>
 ): Base() {
     val tags : MutableList<String> = ArrayList()
     val translations : MutableList<String> = ArrayList()

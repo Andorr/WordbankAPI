@@ -2,6 +2,9 @@ package com.wordbank.helpers
 
 import com.wordbank.dtos.PagedConfig
 import io.ktor.application.ApplicationCall
+import io.ktor.application.call
+import io.ktor.auth.authentication
+import io.ktor.auth.jwt.JWTPrincipal
 import io.ktor.request.receiveOrNull
 import java.lang.Exception
 
@@ -20,7 +23,7 @@ suspend inline fun <reified T: Any> ApplicationCall.bindOrNull(): T?{
     }
 }
 
-suspend fun ApplicationCall.bindPagination() : PagedConfig {
+fun ApplicationCall.bindPagination() : PagedConfig {
     return this.request.queryParameters
         .let {
             PagedConfig()
@@ -29,4 +32,8 @@ suspend fun ApplicationCall.bindPagination() : PagedConfig {
                     limit = if (it.contains("limit")) it["limit"]!!.toInt() else this.limit
                 }
         }
+}
+
+fun ApplicationCall.principalSubject(): String? {
+    return this.authentication.principal<JWTPrincipal>()?.payload?.subject
 }

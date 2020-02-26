@@ -1,5 +1,6 @@
 package com.wordbank.services
 
+import com.mongodb.client.FindIterable
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.result.UpdateResult
 import com.wordbank.dtos.PagedConfig
@@ -9,11 +10,11 @@ import org.litote.kmongo.deleteOneById
 import org.litote.kmongo.findOneById
 import org.litote.kmongo.updateOneById
 
-interface CrudStore<Base> {
-    fun get(id: String): Base?
-    fun getMany(config: PagedConfig, filter: Bson): PagedList<Base>
+interface CrudStore<T> {
+    fun get(id: String): T?
+    fun getMany(config: PagedConfig, filter: Bson?): PagedList<T>
     fun update(id: Any, updateFilter: Bson): UpdateResult
-    fun add(item: Base)
+    fun add(item: T)
     fun delete(id: Any): Boolean
 }
 
@@ -23,14 +24,8 @@ open class CrudService<T>(private val collection: MongoCollection<T>) : CrudStor
         return collection.findOneById(id)
     }
 
-    override fun getMany(config: PagedConfig, filter: Bson): PagedList<T> {
-        val totalCount = collection.find(filter).count()
-        val items = collection.find(filter).skip(config.limit*(config.page-1)).limit(config.limit)
-        return PagedList<T>(
-            items.asIterable(),
-            totalCount,
-            totalCount > (items.count() + config.limit*(config.page-1))
-        )
+    override fun getMany(config: PagedConfig, filter: Bson?): PagedList<T> {
+        return getMany(collection, config, filter)
     }
 
     override fun add(item: T) {
@@ -45,4 +40,22 @@ open class CrudService<T>(private val collection: MongoCollection<T>) : CrudStor
         return collection.updateOneById(id, updateFilter)
     }
 
+    companion object {
+        fun <K>getMany(collection: MongoCollection<K>, config: PagedConfig, filter: Bson? = null): PagedList<K> {
+            val items : FindIterable<K> = collection.find()
+                .takeIf{ filter != null }
+                .let{ collection.find(filter) }
+            val totalCount = items.count()
+
+            return items
+                .skip(config.limit*(config.page-1)).limit(config.limit).toList()
+                .let {
+                    PagedList<K>(
+                        it,
+                        totalCount,
+                        totalCount > (it.count() + config.limit*(config.page-1))
+                    )
+                }
+        }
+    }
 }

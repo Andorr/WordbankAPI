@@ -43,7 +43,7 @@ fun Route.auth(kodein: Kodein) {
                 }!!
 
             userService
-                .getUserByEmail(post.email)
+                .getUserByEmail(post.email.toLowerCase())
                 .whenNull {
                     // Check if user exists
                     call.respond(HttpStatusCode.BadRequest, mapOf("error" to "invalid credentials"))

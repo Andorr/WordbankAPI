@@ -27,6 +27,8 @@ import org.kodein.di.generic.singleton
 import org.litote.kmongo.KMongo
 import org.litote.kmongo.id.jackson.IdJacksonModule
 import org.slf4j.event.Level
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 
 
 fun main(args: Array<String>) {
@@ -51,7 +53,7 @@ fun Application.app() {
             GrantStoreService(instance(), database)
         }
         bind<Dictionary>() with singleton {
-            DictService()
+            DictService(instance(), database)
         }
         bind<JWTHandler>() with singleton {
             JWTHandler(
@@ -80,6 +82,7 @@ fun Application.app(kodein: Kodein) {
         jackson {
             enable(SerializationFeature.INDENT_OUTPUT) // Pretty print JSON
             registerModule(IdJacksonModule())
+            dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
         }
     }
 
