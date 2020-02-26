@@ -7,6 +7,7 @@ import com.wordbank.helpers.whenNull
 import com.wordbank.models.User
 import com.wordbank.models.toDto
 import com.wordbank.services.UserDao
+import com.wordbank.services.UserService
 import io.ktor.application.call
 import io.ktor.auth.authenticate
 import io.ktor.auth.authentication
@@ -17,9 +18,12 @@ import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.route
+import org.kodein.di.Kodein
+import org.kodein.di.generic.instance
 import org.mindrot.jbcrypt.BCrypt
 
-fun Route.user(userService: UserDao) {
+fun Route.user(kodein: Kodein) {
+    val userService by kodein.instance<UserDao>();
 
     route("/api/v1/user") {
 

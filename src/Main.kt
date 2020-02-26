@@ -6,11 +6,9 @@ import com.mongodb.*
 import com.wordbank.auth.JWTHandler
 import com.wordbank.auth.jwt
 import com.wordbank.controllers.auth
+import com.wordbank.controllers.dict
 import com.wordbank.controllers.user
-import com.wordbank.services.GrantStore
-import com.wordbank.services.GrantStoreService
-import com.wordbank.services.UserDao
-import com.wordbank.services.UserService
+import com.wordbank.services.*
 import io.ktor.application.Application
 import io.ktor.application.install
 import io.ktor.features.CallLogging
@@ -52,6 +50,9 @@ fun Application.app() {
         bind<GrantStore>() with singleton {
             GrantStoreService(instance(), database)
         }
+        bind<Dictionary>() with singleton {
+            DictService()
+        }
         bind<JWTHandler>() with singleton {
             JWTHandler(
                 environment.config.property("ktor.jwt.key").getString(),
@@ -63,14 +64,14 @@ fun Application.app() {
 }
 
 fun Application.app(kodein: Kodein) {
-    val userService by kodein.instance<UserDao>()
     val jwtHandler by kodein.instance<JWTHandler>()
 
     jwt(jwtHandler)
 
     routing {
         auth(kodein)
-        user(userService)
+        user(kodein)
+        dict(kodein)
     }
 
     install(DefaultHeaders) { header(HttpHeaders.Server, "Workbank")}
