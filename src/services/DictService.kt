@@ -14,7 +14,6 @@ interface Dictionary: CrudStore<Word> {
     fun getFolders(config: PagedConfig): PagedList<Folder>
 }
 
-
 class DictService(
     mongoClient: MongoClient,
     database: String

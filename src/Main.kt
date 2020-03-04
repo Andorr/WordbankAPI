@@ -1,13 +1,16 @@
 package com.wordbank
 
 
+import ch.qos.logback.classic.Level
+import ch.qos.logback.classic.LoggerContext
 import com.fasterxml.jackson.databind.SerializationFeature
-import com.mongodb.*
+import com.mongodb.ConnectionString
 import com.wordbank.auth.JWTHandler
 import com.wordbank.auth.jwt
 import com.wordbank.controllers.auth
 import com.wordbank.controllers.dict
 import com.wordbank.controllers.user
+import com.wordbank.mappers.initializeMappers
 import com.wordbank.services.*
 import io.ktor.application.Application
 import io.ktor.application.install
@@ -20,14 +23,13 @@ import io.ktor.routing.routing
 import io.ktor.server.engine.commandLineEnvironment
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
-import org.kodein.di.*
+import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
 import org.litote.kmongo.KMongo
 import org.litote.kmongo.id.jackson.IdJacksonModule
-import org.slf4j.event.Level
-import java.text.DateFormat
+import org.slf4j.LoggerFactory
 import java.text.SimpleDateFormat
 
 
@@ -70,14 +72,11 @@ fun Application.app(kodein: Kodein) {
 
     jwt(jwtHandler)
 
-    routing {
-        auth(kodein)
-        user(kodein)
-        dict(kodein)
-    }
+    initializeMappers()
+    initializeLogging()
 
     install(DefaultHeaders) { header(HttpHeaders.Server, "Workbank")}
-    install(CallLogging) { level = Level.INFO }
+    install(CallLogging) { level = org.slf4j.event.Level.INFO }
     install(ContentNegotiation) {
         jackson {
             enable(SerializationFeature.INDENT_OUTPUT) // Pretty print JSON
@@ -86,5 +85,14 @@ fun Application.app(kodein: Kodein) {
         }
     }
 
+    routing {
+        auth(kodein)
+        user(kodein)
+        dict(kodein)
+    }
+}
 
+fun initializeLogging() {
+    (LoggerFactory.getILoggerFactory() as LoggerContext).getLogger("org.mongodb.driver")
+        .level = Level.ERROR
 }

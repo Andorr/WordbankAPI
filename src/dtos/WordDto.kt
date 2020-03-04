@@ -8,13 +8,13 @@ import org.litote.kmongo.Id
 import org.litote.kmongo.newId
 
 data class WordDto(
-    val word : String,
-    val type : WordType
+    var word : String,
+    var type : WordType
     ): Base() {
 
     var owner: String? = null
-    val tags : MutableList<String> = ArrayList()
-    val translations : MutableList<String> = ArrayList()
+    var tags : MutableList<String> = ArrayList()
+    var translations : MutableList<String> = ArrayList()
 
     fun toWord(id: Id<User>): Word {
         val dtoTags = tags
@@ -26,3 +26,16 @@ data class WordDto(
     }
 }
 
+data class WordPutDto(
+    var word: String? = null,
+    var type: WordType? = null,
+    var tags: MutableList<String>? = null,
+    var translations: MutableList<String>? = null
+) {
+
+    fun clean() {
+        word = word?.trim()
+        tags = tags?.let { it.map { t -> t.trim().toLowerCase() }.toMutableList() }
+        translations = translations?.let{ it.map{ t -> t.trim() }.toMutableList() }
+    }
+}

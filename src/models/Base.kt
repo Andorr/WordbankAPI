@@ -9,5 +9,5 @@ abstract class Base() {
     @BsonId
     val id : Id<User> = newId()
     val createdAt: Date = Date()
-    val updatedAt: Date = Date()
+    var updatedAt: Date = Date()
 }

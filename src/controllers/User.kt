@@ -33,9 +33,10 @@ fun Route.user(kodein: Kodein) {
                     call.respond(HttpStatusCode.BadRequest, mapOf("error" to "missing email or password field"))
                     return@post
                 }!!
+            val email = post.email.trim().toLowerCase()
 
             // Check if the username is available
-            userService.getUserByEmail(post.email.toLowerCase())
+            userService.getUserByEmail(email)
                 ?.also {
                     call.respond(HttpStatusCode.BadRequest, mapOf("error" to "email unavailable"))
                     return@post
@@ -49,7 +50,7 @@ fun Route.user(kodein: Kodein) {
                 }
 
             // Create user
-            User(post.email.toLowerCase(), BCrypt.hashpw(post.password, BCrypt.gensalt(10)))
+            User(email, BCrypt.hashpw(post.password, BCrypt.gensalt(10)))
                 .also { userService.createUser(it) }
                 .also { call.respond(it.toDto()) }
         }
