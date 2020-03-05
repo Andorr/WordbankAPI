@@ -1,5 +1,5 @@
 # Wordbank API
-![build](https://github.com/andorr/WordbankAPI/workflows/wordbank-api-ci/badge.svg)
+![build](https://github.com/andorr/WordbankAPI/workflows/build/badge.svg)
 
 ### Functional requirements
 - [x] Should be able to handle authentication (email, password)
