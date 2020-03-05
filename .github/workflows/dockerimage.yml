@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - uses: actions/heroku@1.0.0
+      - uses: actions/checkout@v1
       - name: LogIn
         env: 
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
