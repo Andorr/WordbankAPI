@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: wordbank-api-ci
 
 on:
   push:
