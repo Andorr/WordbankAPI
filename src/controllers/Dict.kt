@@ -48,6 +48,27 @@ fun Route.dict(kodein: Kodein) {
                     }
             }
 
+            get("/{id}") {
+                call.parameters["id"]
+                    ?.let { dict.get(it) }
+                    .whenNull {
+                        call.respond(HttpStatusCode.NotFound, mapOf("error" to "entity by given id does not exist"))
+                        return@get
+                    }!!
+                    .also {
+                        // Handle authorization
+                        val userId = call.principalSubject()
+                        if(it.owner.toString() != userId) {
+                            call.respond(HttpStatusCode.Forbidden)
+                            return@get
+                        }
+                    }
+                    .also {
+
+                        call.respond(HttpStatusCode.OK, it)
+                    }
+            }
+
             put("/{id}") {
                 val put = call.bindOrNull<WordPutDto>()
                     .whenNull {
@@ -65,7 +86,7 @@ fun Route.dict(kodein: Kodein) {
                     }!!
                     .also {
                         // Handle authorization
-                        if(!it.owner.toString().equals(userId)) {
+                        if(it.owner.toString() != userId) {
                             call.respond(HttpStatusCode.Unauthorized)
                             return@put
                         }

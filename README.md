@@ -5,6 +5,7 @@
 - [ ] Should manage words and translations
     - [ ] Should include the type of word
     - [ ] Should be possible to group words into folders
+- [ ] Support events
 - [ ] Should handle quiz
     - [ ] Should analyze and give words that the user is bad at
 - [ ] Should manage word of the day
